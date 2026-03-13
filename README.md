@@ -9,6 +9,17 @@ This solution merges data from **multiple Excel workbooks** stored in a SharePoi
 
 > **Note:** This package implements a **row‑by‑row** append using the Excel Online (Business) connector. A bulk‑insert variant using Office Scripts can be added later.
 
+## ⬇️ Download
+
+**Get the latest solution package (ZIP) from GitHub Releases:**
+
+👉 [📦 Download Latest Release](https://github.com/spashikanti/SunilP-ExcelMergerToMaster/releases/latest)
+
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Power Platform](https://img.shields.io/badge/Platform-Power%20Platform-blue)
+[![GitHub release (latest by date)](https://img.shields.io/github/v/release/spashikanti/SunilP-ExcelMergerToMaster?logo=github)](https://github.com/spashikanti/SunilP-ExcelMergerToMaster/releases/latest)
+[![Downloads](https://img.shields.io/github/downloads/spashikanti/SunilP-ExcelMergerToMaster/total?logo=github)](https://github.com/spashikanti/SunilP-ExcelMergerToMaster/releases)
+
 ---
 
 ## ✨ Features
@@ -44,7 +55,7 @@ This solution merges data from **multiple Excel workbooks** stored in a SharePoi
 
 ## 🚀 Installation
 
-1. **Download** the solution zip from this repo, for example: ExcelMergerToMaster_Unmanaged_1_0_0_1.zip
+1. **Download** the solution zip from this repo, for example: [ExcelMergerToMaster....zip](https://github.com/spashikanti/SunilP-ExcelMergerToMaster/releases/latest)
 2. Go to:
 **Power Apps → Solutions → Import**
 
