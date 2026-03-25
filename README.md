@@ -23,7 +23,7 @@ This solution merges data from **multiple Excel workbooks** stored in a SharePoi
 
 **Download the latest Power Platform solution package (ZIP) to automate your Excel consolidation:**
 
-[![Download ZIP](https://img.shields.io/badge/ownload-Solution-blue?style=for-the-badge&logo=github)](https://github.com/spashikanti/SunilP-ExcelMergerToMaster/releases/latest)
+[![Download ZIP](https://img.shields.io/badge/Download-Solution-blue?style=for-the-badge&logo=github)](https://github.com/spashikanti/SunilP-ExcelMergerToMaster/releases/latest)
 [![Release](https://img.shields.io/github/v/release/spashikanti/SunilP-ExcelMergerToMaster?style=for-the-badge&logo=github&color=brightgreen)](https://github.com/spashikanti/SunilP-ExcelMergerToMaster/releases/latest)
 [![Total Downloads](https://img.shields.io/github/downloads/spashikanti/SunilP-ExcelMergerToMaster/total?style=for-the-badge&color=yellow)](https://github.com/spashikanti/SunilP-ExcelMergerToMaster/releases)
 
