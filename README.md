@@ -1,6 +1,14 @@
 # SunilP-ExcelMergerToMaster
-# Excel Merge to Master (Power Automate + SharePoint)
+Automated workflow to merge data from multiple Excel workbooks into a single Master Table.
 
+![Microsoft Community](https://img.shields.io/badge/Microsoft%20Community-Super%20User-orange?style=for-the-badge&logo=microsoft)
+![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
+![Power Automate](https://img.shields.io/badge/Platform-Power%20Automate-blue?style=for-the-badge&logo=power-automate)
+![SharePoint](https://img.shields.io/badge/Storage-SharePoint-036C71?style=for-the-badge&logo=microsoft-sharepoint)
+
+---
+
+### 💡 The Solution
 This solution merges data from **multiple Excel workbooks** stored in a SharePoint folder into a **single Master Excel Table**.
 
 - Reads **all tables** found in each source workbook (loops over tables per file).
@@ -9,16 +17,15 @@ This solution merges data from **multiple Excel workbooks** stored in a SharePoi
 
 > **Note:** This package implements a **row‑by‑row** append using the Excel Online (Business) connector. A bulk‑insert variant using Office Scripts can be added later.
 
-## ⬇️ Download
+---
 
-**Get the latest solution package (ZIP) from GitHub Releases:**
+## ⬇️ Get Started
 
-👉 [📦 Download Latest Release](https://github.com/spashikanti/SunilP-ExcelMergerToMaster/releases/latest)
+**Download the latest Power Platform solution package (ZIP) to automate your Excel consolidation:**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-![Power Platform](https://img.shields.io/badge/Platform-Power%20Platform-blue)
-[![GitHub release (latest by date)](https://img.shields.io/github/v/release/spashikanti/SunilP-ExcelMergerToMaster?logo=github)](https://github.com/spashikanti/SunilP-ExcelMergerToMaster/releases/latest)
-[![Downloads](https://img.shields.io/github/downloads/spashikanti/SunilP-ExcelMergerToMaster/total?logo=github)](https://github.com/spashikanti/SunilP-ExcelMergerToMaster/releases)
+[![Download ZIP](https://img.shields.io/badge/ownload-Solution-blue?style=for-the-badge&logo=github)](https://github.com/spashikanti/SunilP-ExcelMergerToMaster/releases/latest)
+[![Release](https://img.shields.io/github/v/release/spashikanti/SunilP-ExcelMergerToMaster?style=for-the-badge&logo=github&color=brightgreen)](https://github.com/spashikanti/SunilP-ExcelMergerToMaster/releases/latest)
+[![Total Downloads](https://img.shields.io/github/downloads/spashikanti/SunilP-ExcelMergerToMaster/total?style=for-the-badge&color=yellow)](https://github.com/spashikanti/SunilP-ExcelMergerToMaster/releases)
 
 ---
 
@@ -160,9 +167,25 @@ Contributions are welcome!
 
 ---
 
-## 👤 Author
+# 👤 Author
 
-Created by **Sunil Pashikanti**  
-- GitHub: https://github.com/spashikanti/SunilP-ExcelMergerToMaster/
-- Blog: https://sunilpashikanti.blogspot.com/
+<table style="border: none;">
+  <tr>
+    <td style="border: none;">
+      <strong>Sunil Kumar Pashikanti</strong><br>
+      <em>Principal Architect | Microsoft Power Platform Super User</em><br><br>
+
+[![Community](https://img.shields.io/badge/Community-View%20Profile-indigo?style=for-the-badge&logo=microsoft)](https://community.powerplatform.com/profile/?userid=8077d18b-7b47-ee11-be6d-6045bdebe084)
+&nbsp;
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/sunil-kumar-pashikanti/)
+&nbsp;
+[![Blog](https://img.shields.io/badge/Blog-Blogger-FF5722?style=for-the-badge&logo=blogger)](http://sunilpashikanti.blogspot.com)
+&nbsp;
+[![Website](https://img.shields.io/badge/Portfolio-Visit-yellow?style=for-the-badge&logo=google-chrome)](https://sunilpashikanti.com)
+
+</td>
+  </tr>
+</table>
+
+**Support the Project:** If this solution helped you, please consider giving it a ⭐ to help others find it!
 
