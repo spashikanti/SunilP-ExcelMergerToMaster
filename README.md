@@ -160,12 +160,14 @@ This solution merges data from **multiple Excel workbooks** stored in a SharePoi
 ---
 
 ## 🤝 Contributing
-
-Contributions are welcome!  
-- File issues for bugs and enhancements  
-- Submit PRs for improvements (bulk insert, error handling, docs)
+Contributions are welcome!
+- File **Issues** for bugs or feature requests.
+- Submit **Pull Requests** for performance optimizations or new format support.
 
 ---
+
+## 🤝 Community & Contribution
+As a **Power Platform Super User**, I build these components to solve real-world architectural bottlenecks. Whether it's optimizing payload sizes or enhancing UI responsiveness, I'm always looking for better patterns. If you have ideas or optimizations, feel free to open a Pull Request!
 
 # 👤 Author
 
