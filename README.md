@@ -1,5 +1,6 @@
 # SunilP-ExcelMergerToMaster
-Automated workflow to merge data from multiple Excel workbooks into a single Master Table.
+
+Automated Power Automate solution to consolidate operational Excel data into a single **daily master file** for downstream ERP ingestion.
 
 ![Microsoft Community](https://img.shields.io/badge/Microsoft%20Community-Super%20User-orange?style=for-the-badge&logo=microsoft)
 ![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)
@@ -8,14 +9,37 @@ Automated workflow to merge data from multiple Excel workbooks into a single Mas
 
 ---
 
-### 💡 The Solution
-This solution merges data from **multiple Excel workbooks** stored in a SharePoint folder into a **single Master Excel Table**.
+## 🔍 Real‑World Scenario (Why this exists)
 
-- Reads **all tables** found in each source workbook (loops over tables per file).
-- Appends rows into **one fixed table** in the master workbook (e.g., `Table1`).
-- Delivered as a **Power Platform Solution** and configurable via **Environment Variables (EVs)**.
+In an **Oil & Gas operations environment**, field inspectors perform **mandatory safety and equipment inspections multiple times per day** across active sites. These inspections include gas leak checks, pressure readings, valve status, and safety compliance confirmations.
 
-> **Note:** This package implements a **row‑by‑row** append using the Excel Online (Business) connector. A bulk‑insert variant using Office Scripts can be added later.
+Because inspectors often work in **remote locations with limited connectivity**, they use **approved Excel templates** to capture inspection data offline. Once connectivity is available, completed files are uploaded to a **central SharePoint folder**.
+
+Typical daily volume:
+- Up to **60 Excel files**
+- Up to **150 rows per file**
+- Up to **~9,000 rows per day**
+
+Data must be consolidated **the same day** to support compliance review and **ERP batch ingestion**.
+
+Before automation, a coordinator manually merged dozens of files into a master workbook. This took **1–2 hours per day**, caused rework when files were locked or late, and introduced risk of human error.
+
+**ExcelMergerToMaster** eliminates this manual consolidation step while preserving auditability and data integrity.
+
+---
+
+## 💡 Solution Overview
+
+This solution uses **Power Automate** to consolidate data from **multiple Excel workbooks** stored in SharePoint into a **single daily master Excel file**.
+
+- Runs on a **scheduled basis** aligned to business cut‑off times
+- Reads **all Excel tables** from each source workbook
+- Appends rows into **one fixed master table**
+- Tracks source and processing status
+- Handles locked or failed files safely
+- Archives processed files nightly
+
+> **Note:** Current implementation uses a **row‑by‑row append** with the Excel Online (Business) connector. A bulk‑insert version using Office Scripts is planned.
 
 ---
 
@@ -29,133 +53,200 @@ This solution merges data from **multiple Excel workbooks** stored in a SharePoi
 
 ---
 
+## 🤔 Why Power Automate
+
+- Files already land in **SharePoint**
+- No desktop automation required
+- Aligns with **ERP batch processing**
+- Delivers value quickly without retraining field users
+- Focuses on removing **manual back‑office work**, not redesigning field tooling
+
+Excel remains the intake format. ERP remains the system of record.
+
+---
+
+## 🕒 Processing Model
+
+### Daily Consolidation Flow (Primary)
+- **Trigger:** Scheduled (example: 4:00 PM)
+- Processes all eligible Excel files in the Source folder
+- Produces a **Daily Master file**  
+  Example: `Master_Inspection_2026-04-14.xlsx`
+- Sends summary email with processing stats and link
+
+### Nightly Archive Flow (Secondary)
+- **Trigger:** Scheduled (example: 10:00 PM)
+- Archives **only successfully processed files**
+- Leaves locked or failed files in the Source folder
+- Archives the Daily Master file
+
+---
+
+## 📊 Scale and Constraints
+
+- Up to **60 files per day**
+- Up to **150 rows per file**
+- Up to **~9,000 rows per run**
+- Low concurrency to avoid Excel file locks
+- Pagination enabled to prevent partial reads
+
+---
+
 ## ✨ Features
 
-- Scans a SharePoint **Source** folder and finds all `.xlsx` files  
-- Skips lock files (e.g., `~$...xlsx`)  
-- For each workbook: loops **all defined tables** and reads their rows  
-- Appends all rows into the **master workbook’s single table** (`Table1`)  
-- Pagination enabled to handle larger tables  
-- Concurrency tuned to avoid Excel file locks
+- Scans SharePoint **Source** folder for `.xlsx` files
+- Skips temporary lock files (`~$*.xlsx`)
+- Reads **all tables** from each workbook
+- Appends rows into a **single master table**
+- Auto‑populates:
+  - `SourceFile`
+  - `ProcessedDateTime`
+  - `ProcessingStatus`
+- Explicit handling for locked and failed files
+- Daily summary email
+- Nightly archival with audit trail
+
+---
+
+## 📌 Processing Status Handling (Important)
+
+Each file is evaluated and assigned a **processing status**:
+
+| Status | Meaning | Behavior |
+|------|--------|----------|
+| `Processed` | File successfully read and merged | Archived at night |
+| `Locked` | File was open during processing | Left in Source folder |
+| `Failed` | File read error or schema issue | Left in Source folder |
+
+**No file is archived unless it is successfully processed.**
+
+Locked or failed files are:
+- Explicitly reported in daily email
+- Retried automatically in the next run
+
+This guarantees **no data loss**.
+
+---
+
+## 📧 Daily Notification
+
+After each daily run, an email is sent to authorized users containing:
+- Number of files processed
+- Number of rows merged
+- List of locked or failed files
+- Link to the Daily Master file
+
+Locked files include owner details so corrective action can be taken.
 
 ---
 
 ## 📦 What’s in the Solution
 
 - **Power Automate Cloud Flow**: `Merge Excel Files Data Into Master`
-- **Environment Variables** (EVs)
-- **Connection References**: SharePoint, Excel Online (Business)
+- **Environment Variables**
+- **Connection References**
+  - SharePoint
+  - Excel Online (Business)
 
 ---
 
 ## 🧩 Prerequisites
 
-- Access to a Power Platform environment (Developer/Production) to import solutions
+- Power Platform environment (Dev / Prod)
 - Permissions to import unmanaged solutions
 - SharePoint library with:
-  - A **Source** folder containing the input `.xlsx` workbooks  
-  - A **Master** workbook that has a defined table (e.g., `Table1`)
+  - **Source** folder for incoming files
+  - **Archive** folder structure
+  - Location for Daily Master files
 
-> Each source workbook must contain at least one **Table** (Insert → Table). Ranges without tables are ignored.
+> Each source workbook must contain at least one **Excel Table**  
+> (Insert → Table). Ranges are ignored.
+
+---
+
+## 🔧 Environment Variables (Current Values to set)
+
+To maintain **ALM (Application Lifecycle Management)** best practices, this solution uses Environment Variables. This allows you to move the solution from Dev to Test/Prod without editing the flow logic.
+
+| Display Name | Name | Example Value | Notes |
+| :--- | :--- | :--- | :--- |
+| `EV_SrcSiteUrl` | `sp_EV_SrcSiteUrl` | `https://tenant.sharepoint.com/sites/FieldOps` | SharePoint site hosting the source inspection files. |
+| `EV_SourceFolderID` | `sp_EV_SourceFolderID` | `b!abc123...` | **Internal Identifier** from *Peek code* (more reliable than plain paths). |
+| `EV_MasterFilePath` | `sp_EV_MasterFilePath` | `/Shared Documents/Daily_Masters/Master.xlsx` | Server-relative path to the Daily Master workbook. |
+| `EV_MasterTableName`| `sp_EV_MasterTableName`| `Table1` | The target table in the Master workbook. |
+| `EV_ArchiveFolder`  | `sp_EV_ArchiveFolder`  | `/Shared Documents/Archive` | Path where processed files are moved nightly. |
 
 ---
 
 ## 🚀 Installation
 
-1. **Download** the solution zip from this repo, for example: [ExcelMergerToMaster....zip](https://github.com/spashikanti/SunilP-ExcelMergerToMaster/releases/latest)
-2. Go to:
-**Power Apps → Solutions → Import**
-
+1. **Download** the solution zip from the [Latest Release](https://github.com/spashikanti/SunilP-ExcelMergerToMaster/releases/latest).
+2. Go to **Power Apps → Solutions → Import**.
 3. **Upload** the ZIP file and complete the import wizard.
-
-4. After import, go to:  
-**Solutions → ExcelMergeToMaster → Environment Variables**
-
-5. Set **Current Values** for each EV:
-
-### 🔧 Environment Variables (Current Values to set)
-
-| Display name              | Name                      | Example Current Value                                           | Notes                                                                                  |
-|---------------------------|---------------------------|------------------------------------------------------------------|----------------------------------------------------------------------------------------|
-| `EV_DestinationDocLib`    | `sp_EV_DestinationDocLib` | `Documents`                                                      | Internal library name for the **destination** (master) site (often `Documents`).       |
-| `EV_DestinationSiteUrl`   | `sp_EV_DestinationSiteUrl`| `https://<tenant>.sharepoint.com/sites/site`                      | **No trailing slash**. SharePoint site that hosts the **master** workbook.             |
-| `EV_MasterFilePath`       | `sp_EV_MasterFilePath`    | `/Shared Documents/MasterFiles/Master.xlsx`                      | Server‑relative path to the **master** workbook.                                       |
-| `EV_MasterTableName`      | `sp_EV_MasterTableName`   | `Table1`                                                         | The **single** target table in the master workbook.                                    |
-| `EV_SourceFolder`         | `sp_EV_SourceFolder`      | `/drives/b!abc123/root:/Shared Documents/SourceFiles`            | **Recommended:** use the **internal folder identifier** from *Peek code* (not plain path). |
-| `EV_SrcDocLib`            | `sp_EV_SrcDocLib`         | `Documents`                                                      | Internal library name for the **source** site (often `Documents`).                     |
-| `EV_SrcSiteUrl`           | `sp_EV_SrcSiteUrl`        | `https://<tenant>.sharepoint.com/sites/site`                      | **No trailing slash**. SharePoint site that hosts the **source** files.                |
-
-
-6. Open the flow → **Turn On**.
-
-7. Test by running manually or by waiting for the schedule (if configured).
+4. Set the **Current Values** for the Environment Variables listed above.
+5. Open the flow and **Turn On**.
 
 ---
 
 ## 🧪 Testing
 
-1. Upload **2–3** `.xlsx` files into the **Source** folder.  
-   - Each file must contain **at least one** Table.  
-   - All tables should share the same **column structure** expected by the master table.
-  
-    ### 📑 Columns used in this solution 4 + 1):**
-      `Date`, `Merchant`, `Amount`, `Category`, **`SourceFile`**
-    
-    > The flow **automatically populates** `SourceFile` with the originating file name while appending rows to the master table (`Table1`).  
-    > **Note:** Current version maps these four columns explicitly. A future enhancement will make column mapping dynamic or support whole‑row insertion.
-    ``
-    
-    This workflow **reads all tables** from each source workbook and **writes into one fixed table** in the master workbook.
-    
-    - **Source workbooks (each table) — expected columns (4):**  
-      `Date`, `Merchant`, `Amount`, `Category`
-    
-2. Run the flow manually.
-
-3. Open the master workbook and verify rows were appended to **`Table1`**.
+1. Upload 2–3 Excel files to the Source folder
+2. Ensure each file contains a table with expected columns
+3. Run the scheduled flow manually
+4. Verify rows in the Daily Master table
+5. Verify locked files remain in Source
 
 ---
 
-## 🔧 How It Works (High Level)
+## 🧠 Lessons Learned
 
-1. **List folder** → gets files from the Source folder (filters to `.xlsx`, skips `~$` lock files)  
-2. **For each file** → **Get tables**, then loop **all tables** found in that workbook  
-3. **For each table** → **List rows present in a table** (pagination enabled)  
-4. **For each row** → **Add a row into a table** (master workbook, fixed `Table1`)  
-
-> The design ensures **all tables** in each source workbook are read, but **only one master table** receives the data.
+- Align automation with **business cadence**, not file arrival
+- Excel is often an **intake layer**, not the system of record
+- Avoid endlessly growing master files
+- Use **daily master files** for clarity and auditability
+- Handle locked and late files explicitly
+- Never archive unprocessed data
+- Design emails for **operational clarity**, not noise
+- Expect Excel Online connector limits
+- Pagination and concurrency control are mandatory
+- Late‑arriving data must be supported without data loss
 
 ---
 
-## 🧰 Troubleshooting
+## ❌ What Broke Initially (and How it was Fixed)
 
-**❗ 404 – “The response is not in a JSON format” on List folder**  
-- The SharePoint connector needs the **internal folder identifier** (from **… → Peek code**) rather than a plain text folder path.  
-  Add that internal ID to `EV_SourceFolderIdentifier`.
+* **Excel Locking:** Files uploaded while still open caused 400/404 read failures due to system-level locks.
+    * *Solution:* Implemented a filter to skip temporary lock files (`~$*.xlsx`) and added a retry policy on the Excel Online connector to handle transient busy states.
+* **Defensive Pagination:** While current field templates are capped at ~150 rows, the default connector limit of 256 rows poses a risk of silent truncation if templates expand or files are merged.
+    * *Solution:* Explicitly enabled **Pagination** with a 5000-row threshold to defensively ensure every record is captured regardless of future file growth.
+* **Write Conflicts:** High concurrency in the "Apply to Each" loop led to intermittent "File in Use" errors on the Master workbook.
+    * *Solution:* Set the **Concurrency Control** to `1` on the ingestion loop to ensure a single-threaded, stable, and sequential write process.
+* **Path Unreliability:** Using plain text SharePoint paths caused intermittent 404 errors when moving the solution between environments (Dev/Test/Prod).
+    * *Solution:* Switched to **Internal Folder Identifiers** (obtained via *Peek Code*) for 100% reliable file targeting across different SharePoint sites.
+* **Duplicate Data on Retry:** Initial runs lacked a state check, so retrying a failed flow sometimes caused duplicate rows in the Master file.
+    * *Solution:* Introduced a `ProcessingStatus` metadata check to ensure the flow only targets "Unprocessed" files, making the solution **idempotent**.
 
-**❗ Excel actions stuck on “loading…”**  
-- Repair or rebind the **Excel Online (Business)** connection reference inside the **Solution**.
+These hurdles were resolved through explicit architectural hardening rather than simple "out-of-the-box" configurations.
 
-**❗ Missing rows**  
-- Ensure **Pagination** is enabled (e.g., threshold **5000**) in “List rows present in a table”.
+---
 
-**❗ Table not found**  
-- Confirm each source workbook uses **Insert → Table** (named or default).  
-- Confirm the master workbook contains the target table (e.g., `Table1`).
+## 🔮 What I Would Improve Next
 
-**❗ Locking / conflicts**  
-- Keep concurrency at **1** for the loop that writes to the master workbook.  
-- Avoid opening the master workbook while the flow runs.
+- Bulk insert using **Office Scripts**
+- Optional ingestion into **Dataverse**
+- Automated ERP handoff
+- Validation and richer diagnostics
+- Dynamic column mapping
 
 ---
 
 ## 🗺️ Roadmap
 
-- [ ] Publish **bulk‑insert** variant using **Office Scripts** (single‑call append)  
-- [ ] Add optional **GitHub Actions** (ALM) for export/unpack and managed imports  
-- [ ] Enhanced diagnostics & logging  
-- [ ] Step‑by‑step video tutorial
-- [ ] Support dynamic columns
+- [ ] Office Scripts bulk insert
+- [ ] Enhanced diagnostics
+- [ ] ERP integration option
+- [ ] Video walkthrough
+- [ ] Dynamic schema support
 
 ---
 
@@ -190,4 +281,6 @@ As a **Power Platform Super User**, I build these components to solve real-world
 </table>
 
 **Support the Project:** If this solution helped you, please consider giving it a ⭐ to help others find it!
+
+
 
